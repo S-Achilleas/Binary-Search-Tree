@@ -2,6 +2,18 @@ import java.io.PrintStream;
 
 public class BST implements  WordCounter{
 
+    private class TreeNode{
+        private WordFrequency item;
+        private TreeNode left;
+        private TreeNode right;
+
+        public TreeNode(WordFrequency wordFrequency){
+            this.item = wordFrequency;
+            this.left = null;
+            this.right = null;
+        }
+    }
+
     @Override
     public void insert(String w) {
 
