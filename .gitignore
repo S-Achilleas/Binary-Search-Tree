@@ -1,0 +1,62 @@
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+**/out/
+
+### Compiled Files ###
+*.class
+*.jar
+*.war
+*.ear
+
+### Build Directories ###
+target/
+**/target/
+build/
+**/build/
+.gradle/
+
+### Logs and Databases ###
+*.log
+*.h2.db
+*.trace
+
+### OS Generated Files ###
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+._*
+
+### Editor/IDE Temporary Files ###
+*.swp
+*.swo
+*~
+~$*
+.nbattrs
+
+### Dependency Directories ###
+**/dependencies/
+**/lib/
+
+### Maven ###
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+
+### Gradle ###
+.gradletasknamecache
+!gradle-wrapper.jar
+
+### Env Files ###
+.env
+.env.local
+*.env
+
+### Test Results ###
+**/test-results/
+**/TEST*.xml
