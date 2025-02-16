@@ -7,11 +7,13 @@ public class BST implements  WordCounter{
         private WordFrequency item;
         private TreeNode left;
         private TreeNode right;
+        private int subtreeSize;
 
         public TreeNode(WordFrequency wordFrequency){
             this.item = wordFrequency;
             this.left = null;
             this.right = null;
+            this.subtreeSize = 1;
         }
     }
 
@@ -27,6 +29,7 @@ public class BST implements  WordCounter{
         TreeNode current = parent;
 
         while (current != null){
+            current.subtreeSize++;
             if (k.less(current.item.getKey())){
                 parent = current;
                 current = current.left;
