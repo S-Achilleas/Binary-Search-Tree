@@ -64,6 +64,36 @@ public class BST implements  WordCounter{
         }
     }
 
+    private TreeNode insertT(TreeNode h, WordFrequency x) {
+        if (h == null) return new TreeNode(x); // Base case: create a new node if tree is empty
+
+        Key xKey = x.getKey();
+        Key hKey = h.item.getKey();
+
+        if (xKey.less(hKey)) {  // Insert into left subtree
+            h.left = insertT(h.left, x);
+            h = rotR(h);  // Right rotation to move inserted node up
+        } else {  // Insert into right subtree
+            h.right = insertT(h.right, x);
+            h = rotL(h);  // Left rotation to move inserted node up
+        }
+
+        h.subtreeSize = 1 + size(h.left) + size(h.right); // Maintain subtree size
+        return h;
+    }
+
+    public void insertRot(String w) {
+        w = w.toLowerCase();
+        if (stopWords != null && stopWords.contains(w)) return; // Ignore stop words
+
+        WordFrequency existing = search(w);
+        if (existing != null) {
+            existing.incrementFrequency();
+        } else {
+            head = insertT(head, new WordFrequency(w));
+        }
+    }
+
     private void traverseP(TreeNode node, PrintStream stream){
         if (node == null){
             return;
