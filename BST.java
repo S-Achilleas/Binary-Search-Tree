@@ -68,7 +68,7 @@ public class BST implements  WordCounter{
 
     @Override
     public int getNumDistinctWords() {
-        return 0;
+        return head.subtreeSize;
     }
 
     @Override
