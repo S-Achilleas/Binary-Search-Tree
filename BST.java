@@ -1,6 +1,7 @@
 import java.io.PrintStream;
 
 public class BST implements  WordCounter{
+    private TreeNode head;
 
     private class TreeNode{
         private WordFrequency item;
@@ -16,6 +17,29 @@ public class BST implements  WordCounter{
 
     @Override
     public void insert(String w) {
+        WordFrequency word = new WordFrequency(w);
+        Key k = word.getKey();
+        if (head == null){
+            head = new TreeNode(word);
+            return;
+        }
+        TreeNode parent = head;
+        TreeNode current = parent;
+
+        while (current != null){
+            if (k.less(current.item.getKey())){
+                parent = current;
+                current = current.left;
+            }else{
+                parent = current;
+                current = current.right;
+            }
+        }
+        if (k.less(parent.item.getKey())){
+            parent.left = new TreeNode(word);
+        }else{
+            parent.right = new TreeNode(word);
+        }
 
     }
 

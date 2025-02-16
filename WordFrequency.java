@@ -11,7 +11,7 @@ public class WordFrequency {
         this.frequency++;
     }
 
-    public Key key(){
+    public Key getKey(){
         return wordKey;
     }
 

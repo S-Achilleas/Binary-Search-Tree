@@ -14,7 +14,7 @@ public class Key {
     }
 
 
-    public boolean lessThan(Key w) {
+    public boolean less(Key w) {
         return  this.word.compareTo(w.getWord()) < 0;
     }
 }
