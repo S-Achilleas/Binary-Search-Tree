@@ -68,7 +68,22 @@ public class BST implements  WordCounter{
 
     @Override
     public WordFrequency search(String w) {
-        return null;
+        WordFrequency word = new WordFrequency(w);
+        return searchR(head,word);
+    }
+
+    private WordFrequency searchR(TreeNode node, WordFrequency word){
+        if (node == null){
+            return null;
+        }
+        if (node.item.getKey().equals(word.getKey())){
+            return node.item;
+        }
+        if (node.item.getKey().less(word.getKey())) {
+            return searchR(node.right, word);
+        }else{
+            return searchR(node.left, word);
+        }
     }
 
     @Override
@@ -100,7 +115,7 @@ public class BST implements  WordCounter{
 
     @Override
     public WordFrequency getMaxFrequency() {
-        return null;
+       return null;
     }
 
     @Override
