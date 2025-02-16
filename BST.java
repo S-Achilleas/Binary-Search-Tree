@@ -1,6 +1,7 @@
 import java.io.PrintStream;
 
 public class BST implements  WordCounter{
+    private List stopWords;
     private TreeNode head;
 
     private class TreeNode{
@@ -125,12 +126,12 @@ public class BST implements  WordCounter{
 
     @Override
     public void addStopWord(String w) {
-
+        stopWords.insert(w);
     }
 
     @Override
     public void removeStopWord(String w) {
-
+        stopWords.delete(w);
     }
 
     @Override
