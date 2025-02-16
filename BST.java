@@ -65,33 +65,21 @@ public class BST implements  WordCounter{
     }
 
     private TreeNode insertT(TreeNode h, WordFrequency x) {
-        if (h == null) return new TreeNode(x); // Base case: create a new node if tree is empty
+        if (h == null) return new TreeNode(x);
 
         Key xKey = x.getKey();
         Key hKey = h.item.getKey();
 
-        if (xKey.less(hKey)) {  // Insert into left subtree
+        if (xKey.less(hKey)) {
             h.left = insertT(h.left, x);
-            h = rotR(h);  // Right rotation to move inserted node up
-        } else {  // Insert into right subtree
-            h.right = insertT(h.right, x);
-            h = rotL(h);  // Left rotation to move inserted node up
-        }
-
-        h.subtreeSize = 1 + size(h.left) + size(h.right); // Maintain subtree size
-        return h;
-    }
-
-    public void insertRot(String w) {
-        w = w.toLowerCase();
-        if (stopWords != null && stopWords.contains(w)) return; // Ignore stop words
-
-        WordFrequency existing = search(w);
-        if (existing != null) {
-            existing.incrementFrequency();
+            h = rotR(h);
         } else {
-            head = insertT(head, new WordFrequency(w));
+            h.right = insertT(h.right, x);
+            h = rotL(h);
         }
+
+        h.subtreeSize = 1 + size(h.left) + size(h.right);
+        return h;
     }
 
     private void traverseP(TreeNode node, PrintStream stream){
@@ -117,7 +105,12 @@ public class BST implements  WordCounter{
     @Override
     public WordFrequency search(String w) {
         WordFrequency word = new WordFrequency(w);
-        return searchR(head,word);
+        WordFrequency result = searchR(head,word);
+        if (result != null && result.getFrequency() > getMeanFrequency()){
+            head = removeR(head,result);
+            head = insertT(head,result);
+        }
+        return result;
     }
 
     private WordFrequency searchR(TreeNode node, WordFrequency word){
@@ -156,50 +149,6 @@ public class BST implements  WordCounter{
         h.subtreeSize = 1 + size(h.left) + size(h.right);
         x.subtreeSize = 1 + size(x.left) + size(x.right);
         return x;
-    }
-
-    private TreeNode splay(TreeNode h, WordFrequency x) {
-        if (h == null) return null;
-
-        Key xKey = x.getKey();
-        Key hKey = h.item.getKey();
-
-        if (xKey.less(hKey)) {
-            if (h.left == null) return h;
-
-            Key leftKey = h.left.item.getKey();
-
-            if (xKey.less(leftKey)) {
-                h.left.left = splay(h.left.left, x);
-                h = rotR(h);
-            }
-            else {
-                h.left.right = splay(h.left.right, x);
-                if (h.left.right != null) {
-                    h.left = rotL(h.left);
-                }
-            }
-            return (h.left == null) ? h : rotR(h);
-        }
-        else if (hKey.less(xKey)) {
-            if (h.right == null) return h;
-
-            Key rightKey = h.right.item.getKey();
-            if (rightKey.less(xKey)) {
-                h.right.right = splay(h.right.right, x);
-                h = rotL(h);
-            }
-            else {
-                h.right.left = splay(h.right.left, x);
-                if (h.right.left != null) {
-                    h.right = rotR(h.right);
-                }
-            }
-            return (h.right == null) ? h : rotL(h);
-        }
-
-        h.subtreeSize = 1 + size(h.left) + size(h.right);
-        return h;
     }
 
     private TreeNode partR(TreeNode h, int k) {
