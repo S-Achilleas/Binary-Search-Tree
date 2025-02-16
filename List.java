@@ -1,44 +1,45 @@
 public class List {
-    private class Node{
+    private class Node {
         private String data;
         private Node next;
-        private Node(String data){
+
+        private Node(String data) {
             this.data = data;
             this.next = null;
         }
     }
+
     private Node head;
 
-    public void insert(String data){
+    public void insert(String data) {
         Node newNode = new Node(data);
-        if (head == null){
-            head = newNode;
-        }else{
-            Node current = head;
-            while (current.next != null){
-                current = current.next;
-            }
-            current.next = newNode;
-        }
+        newNode.next = head;
+        head = newNode;
     }
 
-    public void delete(String data){
-        if (head == null){
-            return;
-        }
-        if (head.data.equals(data)){
+    public void delete(String data) {
+        if (head == null) return;
+        if (head.data.equals(data)) {
             head = head.next;
             return;
         }
         Node current = head;
-        Node parent = current;
-        while (current != null){
-            if (current.data.equals(data)){
-                parent.next = current.next;
+        while (current.next != null) {
+            if (current.next.data.equals(data)) {
+                current.next = current.next.next;
                 return;
             }
-            parent = current;
             current = current.next;
         }
+    }
+
+    // Έλεγχος ύπαρξης stop word
+    public boolean contains(String data) {
+        Node current = head;
+        while (current != null) {
+            if (current.data.equals(data)) return true;
+            current = current.next;
+        }
+        return false;
     }
 }
