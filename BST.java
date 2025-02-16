@@ -23,34 +23,57 @@ public class BST implements  WordCounter{
 
     @Override
     public void insert(String w) {
-        w = w.toLowerCase();
-        if (stopWords != null && stopWords.contains(w)) return;
-
-        WordFrequency existing = search(w);
-        if (existing != null) {
-            existing.incrementFrequency();
+        WordFrequency word = new WordFrequency(w);
+        Key k = word.getKey();
+        if (head == null){
+            head = new TreeNode(word);
             return;
         }
+        TreeNode parent = head;
+        TreeNode current = parent;
 
-        WordFrequency word = new WordFrequency(w);
-        head = insertR(head, word);
+        while (current != null){
+            current.subtreeSize++;
+            if (k.less(current.item.getKey())){
+                parent = current;
+                current = current.left;
+            }else{
+                parent = current;
+                current = current.right;
+            }
+        }
+        if (k.less(parent.item.getKey())){
+            parent.left = new TreeNode(word);
+        }else{
+            parent.right = new TreeNode(word);
+        }
+
     }
 
-    private TreeNode insertR(TreeNode node, WordFrequency word){
-        if (node == null) {
-            return new TreeNode(word);
+    public void insertR(WordFrequency word){
+        Key k = word.getKey();
+        if (head == null){
+            head = new TreeNode(word);
+            return;
         }
-        if (word.getKey().less(node.item.getKey())) {
-            node.left = insertR(node.left, word);
-        } else {
-            node.right = insertR(node.right, word);
-        }
-        node.subtreeSize = 1 + size(node.left) + size(node.right);
-        return node;
-    }
+        TreeNode parent = head;
+        TreeNode current = parent;
 
-    private int size(TreeNode node) {
-        return node == null ? 0 : node.subtreeSize;
+        while (current != null){
+            current.subtreeSize++;
+            if (k.less(current.item.getKey())){
+                parent = current;
+                current = current.left;
+            }else{
+                parent = current;
+                current = current.right;
+            }
+        }
+        if (k.less(parent.item.getKey())){
+            parent.left = new TreeNode(word);
+        }else{
+            parent.right = new TreeNode(word);
+        }
     }
 
     private void traverseP(TreeNode node, PrintStream stream){
@@ -71,6 +94,30 @@ public class BST implements  WordCounter{
         sum += traverseS(node.left);
         sum += traverseS(node.right);
         return sum;
+    }
+
+    @Override
+    public WordFrequency search(String w) {
+        WordFrequency word = new WordFrequency(w);
+        return searchR(head,word);
+    }
+
+    private WordFrequency searchR(TreeNode node, WordFrequency word){
+        if (node == null){
+            return null;
+        }
+        if (node.item.getKey().equals(word.getKey())){
+            return node.item;
+        }
+        if (node.item.getKey().less(word.getKey())) {
+            return searchR(node.right, word);
+        }else{
+            return searchR(node.left, word);
+        }
+    }
+
+    private int size(TreeNode node) {
+        return node == null ? 0 : node.subtreeSize;
     }
 
     private TreeNode rotL(TreeNode h) {
@@ -137,32 +184,6 @@ public class BST implements  WordCounter{
         return h;
     }
 
-    @Override
-    public WordFrequency search(String w) {
-
-        WordFrequency word = new WordFrequency(w);
-        WordFrequency found = searchR(head, word);
-
-        if (found != null && found.getFrequency() > getMeanFrequency()) {
-            head = splay(head, word);
-            return head.item;
-        }
-        return found;
-    }
-
-    private WordFrequency searchR(TreeNode node, WordFrequency word) {
-        if (node == null) {
-            return null;
-        }
-        if (node.item.getKey().equals(word.getKey())) {
-            return node.item;
-        }
-        if (node.item.getKey().less(word.getKey())) {
-            return searchR(node.right, word);
-        } else {
-            return searchR(node.left, word);
-        }
-    }
 
 
     @Override
@@ -175,7 +196,7 @@ public class BST implements  WordCounter{
         try (Scanner scanner = new Scanner(new File(filename))) {
             // Set delimiter to split on anything that is NOT a letter or an apostrophe
             scanner.useDelimiter("[^a-zA-Z']+");
-
+            int counter = 1;
             while (scanner.hasNext()) {
                 String word = scanner.next().toLowerCase();
 
@@ -184,6 +205,9 @@ public class BST implements  WordCounter{
 
                 // Insert into the BST only if it's not a stop word
                 insert(word);
+                System.out.println("-------------------------- " + counter);
+                printTreeByWord(System.out);
+                counter++;
             }
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + filename);
