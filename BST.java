@@ -46,6 +46,26 @@ public class BST implements  WordCounter{
 
     }
 
+    private void traverseP(TreeNode node, PrintStream stream){
+        if (node == null){
+            return;
+        }
+        traverseP(node.left,stream);
+        stream.println(node.item);
+        traverseP(node.right,stream);
+    }
+
+    private int traverseS(TreeNode node){
+        if (node == null){
+            return 0;
+        }
+        int sum = 0;
+        sum += node.item.getFrequency();
+        sum += traverseS(node.left);
+        sum += traverseS(node.right);
+        return sum;
+    }
+
     @Override
     public WordFrequency search(String w) {
         return null;
@@ -63,7 +83,9 @@ public class BST implements  WordCounter{
 
     @Override
     public int getNumTotalWords() {
-        return 0;
+        int sum = traverseS(head);
+        return sum;
+
     }
 
     @Override
@@ -98,11 +120,13 @@ public class BST implements  WordCounter{
 
     @Override
     public void printTreeByWord(PrintStream stream) {
+        traverseP(head,stream);
 
     }
 
+
     @Override
     public void printΤreeByFrequency(PrintStream stream) {
-
+        traverseP(head,stream);
     }
 }
