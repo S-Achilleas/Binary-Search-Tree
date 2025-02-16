@@ -23,29 +23,17 @@ public class BST implements  WordCounter{
 
     @Override
     public void insert(String w) {
-        WordFrequency word = new WordFrequency(w);
-        Key k = word.getKey();
-        if (head == null){
-            head = new TreeNode(word);
-            return;
-        }
-        TreeNode parent = head;
-        TreeNode current = parent;
 
-        while (current != null){
-            current.subtreeSize++;
-            if (k.less(current.item.getKey())){
-                parent = current;
-                current = current.left;
-            }else{
-                parent = current;
-                current = current.right;
-            }
-        }
-        if (k.less(parent.item.getKey())){
-            parent.left = new TreeNode(word);
+        w = w.toLowerCase();
+        if (stopWords != null && stopWords.contains(w)) return;
+
+        WordFrequency existing = search(w);
+        if (existing != null) {
+            existing.incrementFrequency();
+            return;
         }else{
-            parent.right = new TreeNode(word);
+            WordFrequency word = new WordFrequency(w);
+            insertR(word);
         }
 
     }
@@ -184,26 +172,61 @@ public class BST implements  WordCounter{
         return h;
     }
 
+    private TreeNode partR(TreeNode h, int k) {
+        int t = (h.left == null) ? 0 : h.left.subtreeSize;
+        if (t > k) {
+            h.left = partR(h.left, k);
+            h = rotR(h); }
+        if (t < k) {
+            h.right = partR(h.right, k-t-1);
+            h = rotL(h); }
+        return h;
+    }
 
+    private TreeNode joinLR(TreeNode a, TreeNode b) {
+        if (b == null) return a;
+        b = partR(b, 0); //διαμέριση με k=0, μικρότερο στοιχείο ρίζα του b
+        b.left = a; //το a θα γίνει το αριστερό υποδέντρο του b
+        return b;
+    }
 
     @Override
     public void remove(String w) {
-
+        head = removeR(head, new WordFrequency(w));
     }
+
+    private TreeNode removeR(TreeNode h, WordFrequency v) {
+        if (h == null) return null;
+
+        Key vKey = v.getKey();
+        Key hKey = h.item.getKey();
+
+        if (vKey.less(hKey)) {
+            h.left = removeR(h.left, v);
+        } else if (hKey.less(vKey)) {
+            h.right = removeR(h.right, v);
+        } else {
+            h = joinLR(h.left, h.right);
+        }
+
+        if (h != null) { // Update subtree size after deletion
+            h.subtreeSize = 1 + size(h.left) + size(h.right);
+        }
+
+        return h;
+    }
+
 
     @Override
     public void load(String filename) {
         try (Scanner scanner = new Scanner(new File(filename))) {
-            // Set delimiter to split on anything that is NOT a letter or an apostrophe
             scanner.useDelimiter("[^a-zA-Z']+");
             int counter = 1;
             while (scanner.hasNext()) {
                 String word = scanner.next().toLowerCase();
 
-                // Ignore words that contain numbers
                 if (word.matches(".*\\d.*")) continue;
 
-                // Insert into the BST only if it's not a stop word
                 insert(word);
                 System.out.println("-------------------------- " + counter);
                 printTreeByWord(System.out);
@@ -265,6 +288,6 @@ public class BST implements  WordCounter{
 
     @Override
     public void printΤreeByFrequency(PrintStream stream) {
-        traverseP(head,stream);
+
     }
 }
