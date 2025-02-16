@@ -20,31 +20,34 @@ public class BST implements  WordCounter{
 
     @Override
     public void insert(String w) {
-        WordFrequency word = new WordFrequency(w);
-        Key k = word.getKey();
-        if (head == null){
-            head = new TreeNode(word);
+        w = w.toLowerCase();
+        if (stopWords != null && stopWords.contains(w)) return;
+
+        WordFrequency existing = search(w);
+        if (existing != null) {
+            existing.incrementFrequency();
             return;
         }
-        TreeNode parent = head;
-        TreeNode current = parent;
 
-        while (current != null){
-            current.subtreeSize++;
-            if (k.less(current.item.getKey())){
-                parent = current;
-                current = current.left;
-            }else{
-                parent = current;
-                current = current.right;
-            }
-        }
-        if (k.less(parent.item.getKey())){
-            parent.left = new TreeNode(word);
-        }else{
-            parent.right = new TreeNode(word);
-        }
+        WordFrequency word = new WordFrequency(w);
+        head = insertR(head, word);
+    }
 
+    private TreeNode insertR(TreeNode node, WordFrequency word){
+        if (node == null) {
+            return new TreeNode(word);
+        }
+        if (word.getKey().less(node.item.getKey())) {
+            node.left = insertR(node.left, word);
+        } else {
+            node.right = insertR(node.right, word);
+        }
+        node.subtreeSize = 1 + size(node.left) + size(node.right);
+        return node;
+    }
+
+    private int size(TreeNode node) {
+        return node == null ? 0 : node.subtreeSize;
     }
 
     private void traverseP(TreeNode node, PrintStream stream){
@@ -111,7 +114,12 @@ public class BST implements  WordCounter{
 
     @Override
     public int getFrequency(String w) {
-        return 0;
+        WordFrequency word = search(w);
+        if (word == null){
+            return 0;
+        }else{
+            return word.getFrequency();
+        }
     }
 
     @Override
@@ -121,7 +129,8 @@ public class BST implements  WordCounter{
 
     @Override
     public double getMeanFrequency() {
-        return 0;
+        int totalWords = getNumTotalWords();
+        return totalWords / (double)getNumDistinctWords();
     }
 
     @Override
