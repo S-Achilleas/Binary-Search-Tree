@@ -1,4 +1,7 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Scanner;
 
 public class BST implements  WordCounter{
     private List stopWords;
@@ -70,25 +73,97 @@ public class BST implements  WordCounter{
         return sum;
     }
 
-    @Override
-    public WordFrequency search(String w) {
-        WordFrequency word = new WordFrequency(w);
-        return searchR(head,word);
+    private TreeNode rotL(TreeNode h) {
+        TreeNode x = h.right;
+        h.right = x.left;
+        x.left = h;
+
+        h.subtreeSize = 1 + size(h.left) + size(h.right);
+        x.subtreeSize = 1 + size(x.left) + size(x.right);
+        return x;
     }
 
-    private WordFrequency searchR(TreeNode node, WordFrequency word){
-        if (node == null){
+    private TreeNode rotR(TreeNode h) {
+        TreeNode x = h.left;
+        h.left = x.right;
+        x.right = h;
+
+        h.subtreeSize = 1 + size(h.left) + size(h.right);
+        x.subtreeSize = 1 + size(x.left) + size(x.right);
+        return x;
+    }
+
+    private TreeNode splay(TreeNode h, WordFrequency x) {
+        if (h == null) return null;
+
+        Key xKey = x.getKey();
+        Key hKey = h.item.getKey();
+
+        if (xKey.less(hKey)) {
+            if (h.left == null) return h;
+
+            Key leftKey = h.left.item.getKey();
+
+            if (xKey.less(leftKey)) {
+                h.left.left = splay(h.left.left, x);
+                h = rotR(h);
+            }
+            else {
+                h.left.right = splay(h.left.right, x);
+                if (h.left.right != null) {
+                    h.left = rotL(h.left);
+                }
+            }
+            return (h.left == null) ? h : rotR(h);
+        }
+        else if (hKey.less(xKey)) {
+            if (h.right == null) return h;
+
+            Key rightKey = h.right.item.getKey();
+            if (rightKey.less(xKey)) {
+                h.right.right = splay(h.right.right, x);
+                h = rotL(h);
+            }
+            else {
+                h.right.left = splay(h.right.left, x);
+                if (h.right.left != null) {
+                    h.right = rotR(h.right);
+                }
+            }
+            return (h.right == null) ? h : rotL(h);
+        }
+
+        h.subtreeSize = 1 + size(h.left) + size(h.right);
+        return h;
+    }
+
+    @Override
+    public WordFrequency search(String w) {
+
+        WordFrequency word = new WordFrequency(w);
+        WordFrequency found = searchR(head, word);
+
+        if (found != null && found.getFrequency() > getMeanFrequency()) {
+            head = splay(head, word);
+            return head.item;
+        }
+        return found;
+    }
+
+    private WordFrequency searchR(TreeNode node, WordFrequency word) {
+        if (node == null) {
             return null;
         }
-        if (node.item.getKey().equals(word.getKey())){
+        if (node.item.getKey().equals(word.getKey())) {
             return node.item;
         }
         if (node.item.getKey().less(word.getKey())) {
             return searchR(node.right, word);
-        }else{
+        } else {
             return searchR(node.left, word);
         }
     }
+
 
     @Override
     public void remove(String w) {
@@ -97,7 +172,22 @@ public class BST implements  WordCounter{
 
     @Override
     public void load(String filename) {
+        try (Scanner scanner = new Scanner(new File(filename))) {
+            // Set delimiter to split on anything that is NOT a letter or an apostrophe
+            scanner.useDelimiter("[^a-zA-Z']+");
 
+            while (scanner.hasNext()) {
+                String word = scanner.next().toLowerCase();
+
+                // Ignore words that contain numbers
+                if (word.matches(".*\\d.*")) continue;
+
+                // Insert into the BST only if it's not a stop word
+                insert(word);
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + filename);
+        }
     }
 
     @Override
@@ -146,7 +236,6 @@ public class BST implements  WordCounter{
     @Override
     public void printTreeByWord(PrintStream stream) {
         traverseP(head,stream);
-
     }
 
 
