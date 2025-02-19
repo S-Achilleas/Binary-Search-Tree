@@ -91,6 +91,15 @@ public class BST implements  WordCounter{
         traverseP(node.right,stream);
     }
 
+    private void traverseA(TreeNode node, WordFrequency[] array, int[] index) {
+        if (node == null || index[0] >= array.length) {
+            return;
+        }
+        traverseA(node.left, array, index);
+        array[index[0]++] = node.item;
+        traverseA(node.right, array, index);
+    }
+
     private int traverseS(TreeNode node){
         if (node == null){
             return 0;
@@ -200,16 +209,12 @@ public class BST implements  WordCounter{
     public void load(String filename) {
         try (Scanner scanner = new Scanner(new File(filename))) {
             scanner.useDelimiter("[^a-zA-Z']+");
-            int counter = 1;
             while (scanner.hasNext()) {
                 String word = scanner.next().toLowerCase();
 
                 if (word.matches(".*\\d.*")) continue;
 
                 insert(word);
-                System.out.println("-------------------------- " + counter);
-                printTreeByWord(System.out);
-                counter++;
             }
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + filename);
@@ -267,6 +272,13 @@ public class BST implements  WordCounter{
 
     @Override
     public void printΤreeByFrequency(PrintStream stream) {
-
+        Sort s = new Sort();
+        WordFrequency[] array = new WordFrequency[head.subtreeSize];
+        int[] index = {0};
+        traverseA(head,array,index);
+        s.quicksort(array,0,array.length-1);
+        for (WordFrequency word : array){
+            stream.println(word);
+        }
     }
 }
