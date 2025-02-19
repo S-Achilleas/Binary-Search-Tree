@@ -245,7 +245,30 @@ public class BST implements  WordCounter{
 
     @Override
     public WordFrequency getMaxFrequency() {
-       return null;
+        if (head == null) {
+            return null;
+        }
+
+        WordFrequency max = head.item;
+        stack<TreeNode> sstack = new stack<>();
+        sstack.push(head);
+
+        while (!sstack.isEmpty()) {
+            TreeNode node = sstack.pop();
+
+            if (node.item.getFrequency() > max.getFrequency()) {
+                max = node.item;
+            }
+
+            if (node.right != null) {
+                sstack.push(node.right);
+            }
+            if (node.left != null) {
+                sstack.push(node.left);
+            }
+        }
+
+        return max;
     }
 
     @Override
