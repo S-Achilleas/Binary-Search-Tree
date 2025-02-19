@@ -173,8 +173,8 @@ public class BST implements  WordCounter{
 
     private TreeNode joinLR(TreeNode a, TreeNode b) {
         if (b == null) return a;
-        b = partR(b, 0); //διαμέριση με k=0, μικρότερο στοιχείο ρίζα του b
-        b.left = a; //το a θα γίνει το αριστερό υποδέντρο του b
+        b = partR(b, 0);
+        b.left = a;
         return b;
     }
 
@@ -211,9 +211,6 @@ public class BST implements  WordCounter{
             scanner.useDelimiter("[^a-zA-Z']+");
             while (scanner.hasNext()) {
                 String word = scanner.next().toLowerCase();
-
-                if (word.matches(".*\\d.*")) continue;
-
                 insert(word);
             }
         } catch (FileNotFoundException e) {

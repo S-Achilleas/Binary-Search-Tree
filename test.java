@@ -3,7 +3,7 @@ public class test {
         BST bst = new BST();
         bst.load("test");
         //bst.printΤreeByFrequency(System.out);
-        //System.out.println(bst.getMaxFrequency());
+        System.out.println(bst.getMaxFrequency());
     }
 }
 
