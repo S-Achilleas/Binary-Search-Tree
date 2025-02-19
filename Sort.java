@@ -13,8 +13,8 @@ public class Sort {
         WordFrequency v = array[r];
 
         for (;;){
-            while (v.getKey().less(array[++i].getKey()));
-            while (array[--j].getKey().less(v.getKey()))
+            while (array[++i].getFrequency() > v.getFrequency());
+            while (v.getFrequency() > array[--j].getFrequency())
                 if (j == p) break;
             if (i >= j) break;
             swap(array, i, j);
