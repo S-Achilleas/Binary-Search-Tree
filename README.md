@@ -25,7 +25,7 @@ This project implements a word frequency counter using a self-balancing Binary S
 - **Interface**:
   - `WordCounter`: Defines core operations like insertion, search, and reporting.
 
--**Technical Highlights**
+- **Technical Highlights**
 - Efficient Reorganization: Frequently searched words move closer to the BST root, reducing future access times.
 - Stop-Word Filtering: Improves analysis relevance by ignoring common words.
 - Memory Efficiency: Uses iterative traversal (stack) instead of recursion to avoid stack overflow for large datasets.
